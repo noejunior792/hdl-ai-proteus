@@ -31,7 +31,7 @@ ALU AI Proteus is a powerful tool that leverages artificial intelligence to gene
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone git@github.com:noejunior792/hdl-ai-proteus.gitw
     cd alu-ai-proteus
     ```
 
