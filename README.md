@@ -1,6 +1,6 @@
-# ALU AI Proteus
+# HDL AI Proteus
 
-ALU AI Proteus is a powerful tool that leverages artificial intelligence to generate hardware description language (HDL) code from natural language prompts. It automates the entire process from design to simulation-ready project files for Proteus. This project is ideal for students, hobbyists, and engineers who want to quickly prototype and test digital logic designs.
+HDL AI Proteus is a powerful tool that leverages artificial intelligence to generate hardware description language (HDL) code from natural language prompts. It automates the entire process from design to simulation-ready project files for Proteus. This project is ideal for students, hobbyists, and engineers who want to quickly prototype and test digital logic designs.
 
 ## Features
 
@@ -32,7 +32,7 @@ ALU AI Proteus is a powerful tool that leverages artificial intelligence to gene
 1.  **Clone the repository:**
     ```bash
     git clone git@github.com:noejunior792/hdl-ai-proteus.gitw
-    cd alu-ai-proteus
+    cd hdl-ai-proteus
     ```
 
 2.  **Install dependencies:**
