@@ -95,6 +95,91 @@ env/
 # VSCode
 .vscode/
 
-# Custom
+# IDEs
+.idea/
+*.swp
+*.swo
+*~
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ========================================
+# HDL AI PROTEUS PROJECT SPECIFIC
+# ========================================
+
+# Generated Proteus projects (user downloads)
+*.pdsprj
+
+# Temporary and build directories
+temp/
 export/
 generated/
+build/
+test_outputs/
+
+# Log files
+logs/
+*.log
+
+# HDL compilation outputs
+*.o
+*.cf
+*.vcd
+work/
+*.ghw
+*.fst
+
+# API keys and sensitive config
+.env.local
+.env.production
+config.local.json
+secrets.json
+api_keys.txt
+
+# Test artifacts
+test_*.pdsprj
+*_test.pdsprj
+generated_projects/
+test_downloads/
+
+# Backup files
+*.bak
+*.backup
+*.orig
+
+# Development scripts
+test_curl.sh
+smart_test.sh
+quick_test.py
+curl_examples.md
+
+# Documentation builds
+docs/_build/
+site/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Cache directories
+.cache/
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Jupyter notebooks (if any)
+*.ipynb
+
+# Temporary editor files
+.#*
+#*#
