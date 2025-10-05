@@ -235,7 +235,7 @@ POST /test-provider
 POST /generate
 ```
 
-For detailed API documentation, see [`docs/DOCS.md`](docs/DOCS.md) and [`docs/api_context.json`](docs/api_context.json).
+For detailed API documentation, see the [Documentation Index](docs/README.md) or go directly to [`docs/DOCS.md`](docs/DOCS.md).
 
 ## 🏗️ Architecture
 
@@ -374,14 +374,15 @@ python -m pytest tests/
 - Document all public methods
 - Add logging for important operations
 
-## 📖 Examples
+## 📖 Documentation & Examples
 
-For comprehensive examples and usage patterns, see:
+For comprehensive guides and examples, see the **[Documentation Index](docs/README.md)** which includes:
 
 - **[Quick Start Guide](docs/QUICK_START.md)** - Step-by-step setup with virtual environment
+- **[Configuration Guide](docs/CONFIGURATION.md)** - Provider setup and environment variables  
 - **[Examples & Usage Patterns](docs/EXAMPLES.md)** - Web interface, Python client, batch processing
-- **[Configuration Guide](docs/CONFIGURATION.md)** - Provider setup and environment variables
 - **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+- **[Complete API Documentation](docs/DOCS.md)** - Full API reference
 
 ### Basic Usage
 ```bash
@@ -452,12 +453,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/noejunior792/hdl-ai-proteus/issues)
-- **Documentation**: 
-  - [Quick Start Guide](docs/QUICK_START.md) - Virtual environment setup and first steps
-  - [Complete API Documentation](docs/DOCS.md) - Full API reference
-  - [Configuration Guide](docs/CONFIGURATION.md) - Provider setup
-  - [Examples Guide](docs/EXAMPLES.md) - Integration patterns
-  - [Troubleshooting Guide](docs/TROUBLESHOOTING.md) - Common issues
+- **Documentation**: [Documentation Index](docs/README.md) with guides for setup, configuration, examples, and troubleshooting
 - **Examples**: See [examples/](examples/) directory for practical usage
 
 ---
