@@ -1,18 +1,65 @@
-# Use an official Python runtime as a parent image
-FROM python:3.12-slim
+# HDL AI Proteus API Dockerfile
+FROM ubuntu:22.04
 
-# Set the working directory in the container
-WORKDIR /app
+# Set environment variables
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
 # Install system dependencies
-RUN apt-get update && apt-get install -y ghdl iverilog && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-venv \
+    ghdl \
+    iverilog \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy the requirements file and install Python dependencies
+# Create app directory
+WORKDIR /app
+
+# Create non-root user
+RUN useradd -m -u 1000 hdluser && \
+    chown -R hdluser:hdluser /app
+
+# Copy requirements first for better caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application code
-COPY . .
+# Install Python dependencies
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Set the entrypoint to run the main script
-ENTRYPOINT ["python3", "src/main.py"]
+# Copy application code
+COPY src/ ./src/
+COPY docs/ ./docs/
+COPY LICENSE ./
+COPY README.md ./
+
+# Create necessary directories
+RUN mkdir -p build export temp logs && \
+    chown -R hdluser:hdluser /app
+
+# Switch to non-root user
+USER hdluser
+
+# Set default environment variables
+ENV SERVER_HOST=0.0.0.0
+ENV SERVER_PORT=5000
+ENV SERVER_DEBUG=false
+ENV DEFAULT_PROVIDER=azure_openai
+ENV LOG_LEVEL=INFO
+ENV TEMP_DIRECTORY=/app/temp
+ENV EXPORT_DIRECTORY=/app/export
+ENV GHDL_PATH=ghdl
+ENV IVERILOG_PATH=iverilog
+
+# Expose port
+EXPOSE 5000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:5000/health || exit 1
+
+# Run the application
+CMD ["python3", "src/app.py"]
