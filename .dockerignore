@@ -54,7 +54,6 @@ Thumbs.db
 .gitattributes
 
 # Documentation
-docs/
 *.md
 !README.md
 

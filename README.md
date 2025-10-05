@@ -36,28 +36,56 @@ git clone https://github.com/noejunior792/hdl-ai-proteus.git
 cd hdl-ai-proteus
 ```
 
-### 2. Install System Dependencies
+### 2. Create and Activate Virtual Environment
 
-**Ubuntu/Debian:**
+**Linux/macOS:**
 ```bash
-sudo apt update
-sudo apt install -y python3 python3-pip ghdl iverilog
+# Create virtual environment
+python3 -m venv venv
+
+# Activate virtual environment
+source venv/bin/activate
+
+# You should see (venv) in your terminal prompt
 ```
 
-**macOS (with Homebrew):**
-```bash
-brew install python ghdl icarus-verilog
+**Windows:**
+```cmd
+# Create virtual environment
+python -m venv venv
+
+# Activate virtual environment
+venv\Scripts\activate
+
+# You should see (venv) in your command prompt
 ```
 
 ### 3. Install Python Dependencies
 ```bash
-pip3 install -r requirements.txt
+# Make sure virtual environment is activated
+pip install --upgrade pip
+pip install -r requirements.txt
 ```
 
-### 4. Configure Environment (Optional)
+### 4. Install HDL Compilers (Optional)
+
+**Ubuntu/Debian:**
+```bash
+sudo apt update
+sudo apt install -y ghdl iverilog
+```
+
+**macOS (with Homebrew):**
+```bash
+brew install ghdl icarus-verilog
+```
+
+**Note:** HDL compilers are optional for basic API usage but required for HDL validation.
+
+### 5. Configure Environment (Optional)
 ```bash
 # Copy and edit environment file
-cp .env.example .env
+cp env.template .env
 # Edit .env with your preferred settings
 ```
 
@@ -65,9 +93,17 @@ cp .env.example .env
 
 ### Starting the API Server
 
+**Make sure your virtual environment is activated first:**
+```bash
+# Activate virtual environment (if not already active)
+source venv/bin/activate  # Linux/macOS
+# or
+venv\Scripts\activate     # Windows
+```
+
 **Option 1: Using the startup script (Recommended)**
 ```bash
-python3 run.py
+python run.py
 ```
 
 **Option 2: Using Make commands**
@@ -87,7 +123,7 @@ make run-prod
 
 **Option 3: Direct execution**
 ```bash
-python3 src/app.py
+python src/app.py
 ```
 
 The API will be available at `http://localhost:5000`
@@ -199,7 +235,7 @@ POST /test-provider
 POST /generate
 ```
 
-For detailed API documentation, see [`docs/api_context.json`](docs/api_context.json).
+For detailed API documentation, see [`docs/DOCS.md`](docs/DOCS.md) and [`docs/api_context.json`](docs/api_context.json).
 
 ## 🏗️ Architecture
 
@@ -340,68 +376,67 @@ python -m pytest tests/
 
 ## 📖 Examples
 
-### VHDL Counter Example
-```json
-{
-  "prompt": "Create a 4-bit up/down counter in VHDL with enable, reset, and direction control signals. Include clock input and count output.",
-  "circuit_name": "updown_counter_4bit",
-  "provider_config": {
-    "provider_type": "azure_openai",
-    "api_key": "your-api-key",
-    "endpoint": "https://your-resource.openai.azure.com/",
-    "api_version": "2024-02-15-preview"
-  },
-  "generation_params": {
-    "temperature": 0.3,
-    "max_tokens": 1500
-  }
-}
-```
+For comprehensive examples and usage patterns, see:
 
-### Verilog ALU Example
-```json
-{
-  "prompt": "Design a 8-bit ALU in Verilog with operations: ADD, SUB, AND, OR, XOR, NOT, SHL, SHR. Include operation select input and zero flag output.",
-  "circuit_name": "alu_8bit",
-  "provider_config": {
-    "provider_type": "gemini",
-    "api_key": "your-gemini-api-key",
-    "model_name": "gemini-1.5-pro"
-  }
-}
+- **[Quick Start Guide](docs/QUICK_START.md)** - Step-by-step setup with virtual environment
+- **[Examples & Usage Patterns](docs/EXAMPLES.md)** - Web interface, Python client, batch processing
+- **[Configuration Guide](docs/CONFIGURATION.md)** - Provider setup and environment variables
+- **[Troubleshooting Guide](docs/TROUBLESHOOTING.md)** - Common issues and solutions
+
+### Basic Usage
+```bash
+# Test API health
+curl http://localhost:5000/health
+
+# Generate simple circuit
+curl --fail -X POST http://localhost:5000/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Create a 2-input AND gate in VHDL",
+    "circuit_name": "and_gate",
+    "provider_config": {
+      "provider_type": "azure_openai",
+      "api_key": "your-api-key",
+      "endpoint": "https://your-resource.openai.azure.com/",
+      "api_version": "2024-05-01-preview",
+      "model_name": "gpt-4o-mini"
+    }
+  }' \
+  --output and_gate.pdsprj
 ```
 
 ## 🐛 Troubleshooting
 
+### Virtual Environment Issues
+```bash
+# If virtual environment activation fails
+rm -rf venv
+python3 -m venv venv
+source venv/bin/activate  # Linux/macOS
+# or
+venv\Scripts\activate     # Windows
+
+# Reinstall dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
 ### Common Issues
 
-1. **"ghdl: command not found"**
-   - Install GHDL: `sudo apt install ghdl`
-   - Or set custom path: `GHDL_PATH=/path/to/ghdl`
-
-2. **"iverilog: command not found"**
-   - Install Icarus Verilog: `sudo apt install iverilog`
-   - Or set custom path: `IVERILOG_PATH=/path/to/iverilog`
-
-3. **API Key Errors**
-   - Verify API key format for your provider
-   - Check endpoint URL format
-   - Ensure API quota is not exceeded
-
-4. **Compilation Errors**
-   - Check generated HDL syntax
-   - Verify compiler versions
-   - Review error logs for details
+1. **"No module named 'src'"** - Ensure virtual environment is activated and you're in project root
+2. **API Key Errors** - Verify API key format and check provider documentation
+3. **"ghdl/iverilog: command not found"** - Install HDL compilers or set custom paths
+4. **Permission Errors** - Check directory permissions: `chmod 755 temp export build logs`
 
 ### Debugging
 
 Enable debug logging:
 ```bash
 export LOG_LEVEL=DEBUG
-python3 src/app.py
+python run.py
 ```
 
-Check logs directory for detailed error information.
+**For comprehensive troubleshooting, see [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md)**
 
 ## 📄 License
 
@@ -417,8 +452,13 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 📞 Support
 
 - **Issues**: [GitHub Issues](https://github.com/noejunior792/hdl-ai-proteus/issues)
-- **Documentation**: [`docs/api_context.json`](docs/api_context.json) and [`docs/DOCS.md`](docs/DOCS.md)
-- **Examples**: See usage examples in documentation
+- **Documentation**: 
+  - [Quick Start Guide](docs/QUICK_START.md) - Virtual environment setup and first steps
+  - [Complete API Documentation](docs/DOCS.md) - Full API reference
+  - [Configuration Guide](docs/CONFIGURATION.md) - Provider setup
+  - [Examples Guide](docs/EXAMPLES.md) - Integration patterns
+  - [Troubleshooting Guide](docs/TROUBLESHOOTING.md) - Common issues
+- **Examples**: See [examples/](examples/) directory for practical usage
 
 ---
 
