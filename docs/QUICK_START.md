@@ -108,7 +108,9 @@ curl -X POST http://localhost:5000/test-provider \
       "api_key": "YOUR_API_KEY_HERE",
       "endpoint": "https://your-resource.openai.azure.com/",
       "api_version": "2024-05-01-preview",
-      "model_name": "gpt-4o-mini"
+      "additional_params": {
+        "deployment_name": "gpt-4o-mini"
+      }
     }
   }'
 ```
@@ -130,7 +132,9 @@ curl --fail -X POST http://localhost:5000/generate \
       "api_key": "YOUR_API_KEY_HERE",
       "endpoint": "https://your-resource.openai.azure.com/",
       "api_version": "2024-05-01-preview",
-      "model_name": "gpt-4o-mini"
+      "additional_params": {
+        "deployment_name": "gpt-4o-mini"
+      }
     }
   }' \
   --output and_gate_simple.pdsprj

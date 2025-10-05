@@ -26,7 +26,9 @@ curl --fail -X POST http://localhost:5000/generate \
       "api_key": "your-api-key",
       "endpoint": "https://your-resource.openai.azure.com/",
       "api_version": "2024-05-01-preview",
-      "model_name": "gpt-4o-mini"
+      "additional_params": {
+        "deployment_name": "gpt-4o-mini"
+      }
     }
   }' \
   --output and_gate_2input.pdsprj
@@ -367,7 +369,9 @@ case $PROVIDER in
             "api_key": "'$AZURE_OPENAI_KEY'",
             "endpoint": "'$AZURE_OPENAI_ENDPOINT'",
             "api_version": "'${AZURE_OPENAI_VERSION:-2024-05-01-preview}'",
-            "model_name": "'${AZURE_OPENAI_MODEL:-gpt-4o-mini}'"
+            "additional_params": {
+                "deployment_name": "'${AZURE_OPENAI_DEPLOYMENT:-gpt-4o-mini}'"
+            }
         }'
         ;;
     "openai")
@@ -473,7 +477,9 @@ PROVIDER_CONFIG='{
     "api_key": "'$AZURE_OPENAI_KEY'",
     "endpoint": "'$AZURE_OPENAI_ENDPOINT'",
     "api_version": "2024-05-01-preview",
-    "model_name": "gpt-4o-mini"
+    "additional_params": {
+        "deployment_name": "gpt-4o-mini"
+    }
 }'
 
 # Create output directory
@@ -613,7 +619,9 @@ def main():
         "api_key": "your-azure-key",
         "endpoint": "https://your-resource.openai.azure.com/",
         "api_version": "2024-05-01-preview",
-        "model_name": "gpt-4o-mini"
+        "additional_params": {
+            "deployment_name": "gpt-4o-mini"
+        }
     }
     
     # Test connection
@@ -870,7 +878,9 @@ def advanced_usage_example():
         "api_key": "your-key",
         "endpoint": "https://your-resource.openai.azure.com/",
         "api_version": "2024-05-01-preview",
-        "model_name": "gpt-4o-mini"
+        "additional_params": {
+            "deployment_name": "gpt-4o-mini"
+        }
     }
     
     # Batch generation
