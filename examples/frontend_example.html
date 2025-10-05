@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDL AI Proteus - Frontend Example</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fafafa;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        input[type="text"], input[type="password"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(52, 152, 219, 0.3);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(149, 165, 166, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #229954 100%);
+            color: white;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .status.warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .provider-config {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .metadata {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+
+        .example-prompts {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .example-prompts h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+
+        .example-prompts ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .example-prompts li {
+            padding: 8px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .example-prompts li:hover {
+            background: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 HDL AI Proteus</h1>
+            <p>Generate HDL circuits from natural language using AI</p>
+        </div>
+
+        <div class="main-content">
+            <!-- API Status Section -->
+            <div class="section">
+                <h2>🏥 API Status</h2>
+                <button class="btn btn-secondary" onclick="checkApiHealth()">Check API Health</button>
+                <div id="apiStatus"></div>
+            </div>
+
+            <!-- Provider Configuration Section -->
+            <div class="section">
+                <h2>🤖 AI Provider Configuration</h2>
+                <div class="form-group">
+                    <label for="providerType">Provider Type:</label>
+                    <select id="providerType" onchange="updateProviderConfig()">
+                        <option value="azure_openai">Azure OpenAI</option>
+                        <option value="gemini">Google Gemini</option>
+                        <option value="openai">OpenAI</option>
+                    </select>
+                </div>
+
+                <div class="provider-config" id="providerConfig">
+                    <!-- Azure OpenAI Config (Default) -->
+                    <div class="form-group">
+                        <label for="apiKey">API Key:</label>
+                        <input type="password" id="apiKey" placeholder="Enter your API key">
+                    </div>
+                    <div class="form-group">
+                        <label for="endpoint">Endpoint:</label>
+                        <input type="text" id="endpoint" placeholder="https://your-resource.openai.azure.com/">
+                    </div>
+                    <div class="form-group">
+                        <label for="apiVersion">API Version:</label>
+                        <input type="text" id="apiVersion" value="2024-05-01-preview">
+                    </div>
+                    <div class="form-group">
+                        <label for="modelName">Model Name:</label>
+                        <input type="text" id="modelName" value="gpt-4o-mini">
+                    </div>
+                </div>
+
+                <button class="btn btn-secondary" onclick="testProvider()">Test Connection</button>
+                <div id="connectionStatus"></div>
+            </div>
+
+            <!-- HDL Generation Section -->
+            <div class="section">
+                <h2>⚡ HDL Generation</h2>
+                <div class="grid">
+                    <div>
+                        <div class="form-group">
+                            <label for="prompt">Circuit Description:</label>
+                            <textarea id="prompt" placeholder="Describe the circuit you want to generate...
+Example: Create a 4-bit counter in VHDL with clock, reset, and enable inputs"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="circuitName">Circuit Name:</label>
+                            <input type="text" id="circuitName" placeholder="e.g., counter_4bit" pattern="[a-zA-Z_][a-zA-Z0-9_]*">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="temperature">Temperature (0.0 - 2.0):</label>
+                            <input type="number" id="temperature" value="0.3" min="0" max="2" step="0.1">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="maxTokens">Max Tokens:</label>
+                            <input type="number" id="maxTokens" value="2000" min="100" max="8000">
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="example-prompts">
+                            <h4>📝 Example Prompts:</h4>
+                            <ul>
+                                <li onclick="setPrompt('Create a 4-bit counter in VHDL with clock, reset, and enable inputs', 'counter_4bit')">4-bit Counter (VHDL)</li>
+                                <li onclick="setPrompt('Design a 2-input AND gate in VHDL using IEEE.STD_LOGIC_1164', 'and_gate')">AND Gate (VHDL)</li>
+                                <li onclick="setPrompt('Create an 8-bit shift register in Verilog with parallel load', 'shift_reg_8bit')">Shift Register (Verilog)</li>
+                                <li onclick="setPrompt('Design a simple ALU in VHDL with ADD, SUB, AND, OR operations', 'simple_alu')">Simple ALU (VHDL)</li>
+                                <li onclick="setPrompt('Create a D flip-flop in Verilog with asynchronous reset', 'dff_async_reset')">D Flip-Flop (Verilog)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="generateHDL()" id="generateBtn">
+                    🚀 Generate HDL Project
+                </button>
+                <div id="generationStatus"></div>
+            </div>
+
+            <!-- Results Section -->
+            <div class="section" id="resultsSection" style="display: none;">
+                <h2>📊 Generation Results</h2>
+                <div id="results"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000';
+
+        // Check API Health
+        async function checkApiHealth() {
+            const statusDiv = document.getElementById('apiStatus');
+            statusDiv.innerHTML = '<div class="loading"></div>Checking API health...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ API is healthy!<br>
+                            Service: ${data.service}<br>
+                            Version: ${data.version}<br>
+                            Environment: ${data.environment}
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ API health check failed: ${data.error || 'Unknown error'}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Cannot connect to API: ${error.message}<br>
+                        Make sure the API server is running on ${API_BASE_URL}</h2>
+                    </div>
+                `;
+            }
+        }
+
+        // Update provider configuration fields
+        function updateProviderConfig() {
+            const providerType = document.getElementById('providerType').value;
+            const configDiv = document.getElementById('providerConfig');
+
+            if (providerType === 'azure_openai') {
+                configDiv.innerHTML = `
+                    <div class="form-group">
+                        <label for="apiKey">API Key:</label>
+                        <input type="password" id="apiKey" placeholder="Enter your Azure OpenAI API key">
+                    </div>
+                    <div class="form-group">
+                        <label for="endpoint">Endpoint:</label>
+                        <input type="text" id="endpoint" placeholder="https://your-resource.openai.azure.com/">
+                    </div>
+                    <div class="form-group">
+                        <label for="apiVersion">API Version:</label>
+                        <input type="text" id="apiVersion" value="2024-05-01-preview">
+                    </div>
+                    <div class="form-group">
+                        <label for="modelName">Model Name:</label>
+                        <input type="text" id="modelName" value="gpt-4o-mini">
+                    </div>
+                `;
+            } else if (providerType === 'gemini') {
+                configDiv.innerHTML = `
+                    <div class="form-group">
+                        <label for="apiKey">API Key:</label>
+                        <input type="password" id="apiKey" placeholder="Enter your Google AI API key">
+                    </div>
+                    <div class="form-group">
+                        <label for="modelName">Model Name:</label>
+                        <input type="text" id="modelName" value="gemini-pro">
+                    </div>
+                `;
+            } else if (providerType === 'openai') {
+                configDiv.innerHTML = `
+                    <div class="form-group">
+                        <label for="apiKey">API Key:</label>
+                        <input type="password" id="apiKey" placeholder="Enter your OpenAI API key">
+                    </div>
+                    <div class="form-group">
+                        <label for="modelName">Model Name:</label>
+                        <input type="text" id="modelName" value="gpt-4">
+                    </div>
+                    <div class="form-group">
+                        <label for="organization">Organization (Optional):</label>
+                        <input type="text" id="organization" placeholder="Your OpenAI organization ID">
+                    </div>
+                `;
+            }
+        }
+
+        // Get provider configuration
+        function getProviderConfig() {
+            const providerType = document.getElementById('providerType').value;
+            const apiKey = document.getElementById('apiKey').value;
+            const modelName = document.getElementById('modelName').value;
+
+            const config = {
+                provider_type: providerType,
+                api_key: apiKey,
+                model_name: modelName
+            };
+
+            if (providerType === 'azure_openai') {
+                config.endpoint = document.getElementById('endpoint').value;
+                config.api_version = document.getElementById('apiVersion').value;
+            } else if (providerType === 'openai') {
+                const organization = document.getElementById('organization').value;
+                if (organization) {
+                    config.organization = organization;
+                }
+            }
+
+            return config;
+        }
+
+        // Test provider connection
+        async function testProvider() {
+            const statusDiv = document.getElementById('connectionStatus');
+            const providerConfig = getProviderConfig();
+
+            // Validate required fields
+            if (!providerConfig.api_key) {
+                statusDiv.innerHTML = '<div class="status error">❌ API Key is required</div>';
+                return;
+            }
+
+            if (providerConfig.provider_type === 'azure_openai' && !providerConfig.endpoint) {
+                statusDiv.innerHTML = '<div class="status error">❌ Endpoint is required for Azure OpenAI</div>';
+                return;
+            }
+
+            statusDiv.innerHTML = '<div class="loading"></div>Testing provider connection...';
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/test-provider`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        provider_config: providerConfig
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ Connection successful!<br>
+                            Provider: ${data.provider}<br>
+                            Model: ${data.model}<br>
+                            Response Time: ${data.response_time.toFixed(2)}s
+                        </div>
+                    `;
+                } else {
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Connection failed: ${data.error || 'Unknown error'}<br>
+                            ${data.suggestion ? `Suggestion: ${data.suggestion}` : ''}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Test failed: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Set example prompt
+        function setPrompt(prompt, circuitName) {
+            document.getElementById('prompt').value = prompt;
+            document.getElementById('circuitName').value = circuitName;
+        }
+
+        // Generate HDL project
+        async function generateHDL() {
+            const statusDiv = document.getElementById('generationStatus');
+            const resultsSection = document.getElementById('resultsSection');
+            const generateBtn = document.getElementById('generateBtn');
+            
+            // Get form data
+            const prompt = document.getElementById('prompt').value.trim();
+            const circuitName = document.getElementById('circuitName').value.trim();
+            const temperature = parseFloat(document.getElementById('temperature').value);
+            const maxTokens = parseInt(document.getElementById('maxTokens').value);
+            const providerConfig = getProviderConfig();
+
+            // Validate inputs
+            if (!prompt) {
+                statusDiv.innerHTML = '<div class="status error">❌ Circuit description is required</div>';
+                return;
+            }
+
+            if (!circuitName || !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(circuitName)) {
+                statusDiv.innerHTML = '<div class="status error">❌ Valid circuit name is required (alphanumeric and underscores only)</div>';
+                return;
+            }
+
+            if (!providerConfig.api_key) {
+                statusDiv.innerHTML = '<div class="status error">❌ Provider API key is required</div>';
+                return;
+            }
+
+            // Disable button and show loading
+            generateBtn.disabled = true;
+            generateBtn.innerHTML = '<div class="loading"></div>Generating HDL Project...';
+            statusDiv.innerHTML = '<div class="status info"><div class="loading"></div>Generating HDL code, please wait...</div>';
+            resultsSection.style.display = 'none';
+
+            const startTime = Date.now();
+
+            try {
+                const payload = {
+                    prompt: prompt,
+                    circuit_name: circuitName,
+                    provider_config: providerConfig,
+                    generation_params: {
+                        temperature: temperature,
+                        max_tokens: maxTokens
+                    }
+                };
+
+                const response = await fetch(`${API_BASE_URL}/generate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const endTime = Date.now();
+                const totalTime = ((endTime - startTime) / 1000).toFixed(2);
+
+                if (response.ok) {
+                    // Get metadata from headers
+                    const hdlLanguage = response.headers.get('X-HDL-Language');
+                    const providerUsed = response.headers.get('X-Provider-Used');
+                    const compilationSuccess = response.headers.get('X-Compilation-Success');
+                    const metadata = response.headers.get('X-Generation-Metadata');
+
+                    // Download the file
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${circuitName}.pdsprj`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    // Show success status
+                    statusDiv.innerHTML = `
+                        <div class="status success">
+                            ✅ HDL project generated successfully!<br>
+                            File: ${circuitName}.pdsprj (${blob.size} bytes)<br>
+                            Total Time: ${totalTime}s
+                        </div>
+                    `;
+
+                    // Show results
+                    const resultsDiv = document.getElementById('results');
+                    resultsDiv.innerHTML = `
+                        <div class="status success">
+                            <h3>🎉 Generation Successful!</h3>
+                            <p><strong>Circuit:</strong> ${circuitName}</p>
+                            <p><strong>HDL Language:</strong> ${hdlLanguage || 'Unknown'}</p>
+                            <p><strong>Provider:</strong> ${providerUsed || 'Unknown'}</p>
+                            <p><strong>Compilation:</strong> ${compilationSuccess === 'True' ? '✅ Success' : '❌ Failed'}</p>
+                            <p><strong>File Size:</strong> ${blob.size} bytes</p>
+                            <p><strong>Generation Time:</strong> ${totalTime}s</p>
+                        </div>
+                        ${metadata ? `<div class="metadata"><strong>Metadata:</strong><br><pre>${metadata}</pre></div>` : ''}
+                    `;
+                    resultsSection.style.display = 'block';
+
+                } else {
+                    const errorData = await response.json();
+                    statusDiv.innerHTML = `
+                        <div class="status error">
+                            ❌ Generation failed: ${errorData.error}<br>
+                            ${errorData.suggestion ? `Suggestion: ${errorData.suggestion}` : ''}
+                            ${errorData.provider_type ? `Provider: ${errorData.provider_type}` : ''}
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        ❌ Request failed: ${error.message}
+                    </div>
+                `;
+            } finally {
+                // Re-enable button
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = '🚀 Generate HDL Project';
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkApiHealth();
+        });
+    </script>
+</body>
+</html>
