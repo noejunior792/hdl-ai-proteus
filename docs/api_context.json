@@ -1,0 +1,371 @@
+{
+  "api": {
+    "name": "HDL AI Proteus",
+    "version": "1.0.0",
+    "description": "REST API for generating HDL code from natural language using AI providers and exporting to Proteus projects",
+    "base_url": "http://localhost:5000",
+    "documentation": "docs/DOCS.md"
+  },
+  "endpoints": {
+    "health": {
+      "method": "GET",
+      "path": "/health",
+      "description": "Health check endpoint to verify API status",
+      "parameters": {},
+      "response": {
+        "status": "string",
+        "timestamp": "string (ISO)",
+        "service": "string",
+        "version": "string",
+        "environment": "string"
+      },
+      "example_response": {
+        "status": "healthy",
+        "timestamp": "2025-10-05T17:30:00.000Z",
+        "service": "HDL AI Proteus",
+        "version": "1.0.0",
+        "environment": "development"
+      }
+    },
+    "api_info": {
+      "method": "GET",
+      "path": "/api/info",
+      "description": "Get comprehensive API information and documentation",
+      "parameters": {},
+      "response": {
+        "name": "string",
+        "version": "string",
+        "description": "string",
+        "environment": "string",
+        "endpoints": "object",
+        "supported_providers": "array",
+        "supported_languages": "array",
+        "max_request_size": "number",
+        "default_provider": "string"
+      }
+    },
+    "list_providers": {
+      "method": "GET",
+      "path": "/api/providers",
+      "description": "List all available AI providers with their information",
+      "parameters": {},
+      "response": {
+        "providers": "object",
+        "count": "number",
+        "default_provider": "string"
+      }
+    },
+    "provider_template": {
+      "method": "GET",
+      "path": "/api/providers/{provider_type}/template",
+      "description": "Get configuration template for a specific provider",
+      "parameters": {
+        "provider_type": {
+          "type": "string",
+          "required": true,
+          "description": "Provider identifier (azure_openai, gemini, openai, etc.)"
+        }
+      },
+      "response": {
+        "provider_type": "string",
+        "description": "string",
+        "required_fields": "object",
+        "optional_fields": "object",
+        "example": "object"
+      }
+    },
+    "test_provider": {
+      "method": "POST",
+      "path": "/test-provider",
+      "description": "Test AI provider connection without generating code",
+      "content_type": "application/json",
+      "request_body": {
+        "provider_config": {
+          "type": "object",
+          "required": true,
+          "description": "Provider configuration object"
+        }
+      },
+      "response": {
+        "success": "boolean",
+        "provider": "string",
+        "model": "string",
+        "message": "string",
+        "response_time": "number",
+        "error": "string (if failed)"
+      },
+      "example_request": {
+        "provider_config": {
+          "provider_type": "azure_openai",
+          "api_key": "your-api-key",
+          "endpoint": "https://your-resource.openai.azure.com/",
+          "api_version": "2024-05-01-preview",
+          "model_name": "gpt-4o-mini"
+        }
+      }
+    },
+    "generate": {
+      "method": "POST",
+      "path": "/generate",
+      "description": "Generate HDL code from natural language and return Proteus project file",
+      "content_type": "application/json",
+      "request_body": {
+        "prompt": {
+          "type": "string",
+          "required": true,
+          "description": "Natural language description of the circuit to generate"
+        },
+        "circuit_name": {
+          "type": "string",
+          "required": true,
+          "description": "Name for the generated circuit (alphanumeric and underscores only)"
+        },
+        "provider_config": {
+          "type": "object",
+          "required": true,
+          "description": "AI provider configuration object"
+        },
+        "generation_params": {
+          "type": "object",
+          "required": false,
+          "description": "AI generation parameters (temperature, max_tokens, etc.)"
+        }
+      },
+      "response": {
+        "success": {
+          "content_type": "application/octet-stream",
+          "headers": {
+            "Content-Disposition": "attachment; filename={circuit_name}.pdsprj",
+            "X-HDL-Language": "vhdl|verilog",
+            "X-Provider-Used": "string",
+            "X-Compilation-Success": "boolean",
+            "X-Generation-Metadata": "string (JSON)"
+          },
+          "body": "Binary Proteus project file (.pdsprj)"
+        },
+        "error": {
+          "content_type": "application/json",
+          "status_codes": [400, 500],
+          "body": {
+            "error": "string",
+            "provider_type": "string",
+            "suggestion": "string",
+            "session_id": "string"
+          }
+        }
+      },
+      "example_request": {
+        "prompt": "Create a 4-bit counter in VHDL with clock, reset, and enable inputs",
+        "circuit_name": "counter_4bit",
+        "provider_config": {
+          "provider_type": "azure_openai",
+          "api_key": "your-api-key",
+          "endpoint": "https://your-resource.openai.azure.com/",
+          "api_version": "2024-05-01-preview",
+          "model_name": "gpt-4o-mini"
+        },
+        "generation_params": {
+          "temperature": 0.3,
+          "max_tokens": 2000
+        }
+      }
+    }
+  },
+  "providers": {
+    "azure_openai": {
+      "name": "Azure OpenAI",
+      "description": "Microsoft Azure OpenAI Service",
+      "supported_models": ["gpt-4", "gpt-4o", "gpt-4o-mini", "gpt-35-turbo"],
+      "required_fields": {
+        "api_key": "Azure OpenAI API key",
+        "endpoint": "Azure OpenAI endpoint URL",
+        "api_version": "API version (e.g., 2024-05-01-preview)"
+      },
+      "optional_fields": {
+        "model_name": "Model to use (default: gpt-4o)",
+        "deployment_name": "Custom deployment name"
+      },
+      "example_config": {
+        "provider_type": "azure_openai",
+        "api_key": "your-api-key",
+        "endpoint": "https://your-resource.openai.azure.com/",
+        "api_version": "2024-05-01-preview",
+        "model_name": "gpt-4o-mini"
+      }
+    },
+    "gemini": {
+      "name": "Google Gemini",
+      "description": "Google's Gemini AI models",
+      "supported_models": ["gemini-pro", "gemini-pro-vision"],
+      "required_fields": {
+        "api_key": "Google AI API key"
+      },
+      "optional_fields": {
+        "model_name": "Model to use (default: gemini-pro)"
+      },
+      "example_config": {
+        "provider_type": "gemini",
+        "api_key": "your-gemini-api-key",
+        "model_name": "gemini-pro"
+      }
+    },
+    "openai": {
+      "name": "OpenAI",
+      "description": "OpenAI GPT models",
+      "supported_models": ["gpt-4", "gpt-4-turbo", "gpt-3.5-turbo"],
+      "required_fields": {
+        "api_key": "OpenAI API key"
+      },
+      "optional_fields": {
+        "model_name": "Model to use (default: gpt-4)",
+        "organization": "Organization ID"
+      },
+      "example_config": {
+        "provider_type": "openai",
+        "api_key": "your-openai-api-key",
+        "model_name": "gpt-4",
+        "organization": "your-org-id"
+      }
+    }
+  },
+  "supported_languages": ["VHDL", "Verilog"],
+  "generation_metadata": {
+    "circuit_name": "Generated circuit name",
+    "hdl_language": "vhdl|verilog",
+    "provider_used": "Provider that generated the code",
+    "model_used": "AI model that generated the code",
+    "compilation_success": "Whether HDL compilation succeeded",
+    "file_size": "Size of generated .pdsprj file in bytes",
+    "generation_time": {
+      "compilation": "Time spent compiling HDL code (seconds)",
+      "export": "Time spent exporting project file (seconds)"
+    },
+    "code_stats": {
+      "original_entity_name": "Original entity/module name from generated code",
+      "lines_of_code": "Number of lines in generated HDL",
+      "has_testbench": "Whether a testbench was generated",
+      "libraries_used": "HDL libraries used",
+      "signals_count": "Number of signals/wires",
+      "processes_count": "Number of processes/always blocks"
+    }
+  },
+  "error_handling": {
+    "status_codes": {
+      "200": "Success - Returns binary .pdsprj file",
+      "400": "Bad Request - Invalid input or provider error",
+      "404": "Not Found - Invalid endpoint",
+      "413": "Request Entity Too Large - Request too large",
+      "500": "Internal Server Error - Unexpected server error"
+    },
+    "common_errors": {
+      "invalid_provider": {
+        "message": "Unsupported provider type",
+        "status": 400,
+        "example": {
+          "error": "Unsupported provider type: invalid_provider",
+          "supported_providers": ["azure_openai", "azure", "gemini", "google_gemini", "openai", "gpt"]
+        }
+      },
+      "missing_fields": {
+        "message": "Required configuration fields missing",
+        "status": 400,
+        "example": {
+          "error": "Missing required field: api_key",
+          "provider_type": "azure_openai",
+          "required_fields": ["api_key", "endpoint", "api_version"]
+        }
+      },
+      "connection_failed": {
+        "message": "Unable to connect to AI provider",
+        "status": 400,
+        "example": {
+          "error": "Provider connection failed: Invalid API key",
+          "provider_type": "azure_openai",
+          "suggestion": "Please check your API credentials and endpoint configuration"
+        }
+      },
+      "invalid_circuit_name": {
+        "message": "Circuit name contains invalid characters",
+        "status": 400,
+        "example": {
+          "error": "Invalid circuit name. Use only alphanumeric characters and underscores",
+          "field": "circuit_name",
+          "provided_value": "my-circuit!"
+        }
+      }
+    }
+  },
+  "best_practices": {
+    "curl_usage": {
+      "always_use_fail_flag": "Use --fail flag with --output to prevent error responses from being saved as files",
+      "example": "curl --fail -X POST http://localhost:5000/generate -d '{...}' --output circuit.pdsprj"
+    },
+    "provider_testing": {
+      "test_before_generate": "Always test provider connection using /test-provider before generating code",
+      "handle_errors": "Check HTTP status codes and error messages for proper error handling"
+    },
+    "prompt_engineering": {
+      "be_specific": "Include target HDL language (VHDL/Verilog) in prompts",
+      "specify_libraries": "Mention required libraries and standards",
+      "provide_details": "Include input/output specifications and behavior description"
+    },
+    "security": {
+      "protect_api_keys": "Never hardcode API keys in client-side code",
+      "use_environment_variables": "Store sensitive configuration in environment variables",
+      "validate_inputs": "Always validate and sanitize user inputs"
+    }
+  },
+  "frontend_integration": {
+    "javascript_example": {
+      "fetch_api": "Use fetch() with proper error handling",
+      "blob_handling": "Handle binary response for .pdsprj files",
+      "metadata_extraction": "Extract metadata from response headers"
+    },
+    "python_example": {
+      "requests_library": "Use requests library with proper error handling",
+      "file_saving": "Save binary content to .pdsprj files",
+      "response_validation": "Check status codes before processing"
+    },
+    "common_patterns": {
+      "test_then_generate": "Test provider connection before actual generation",
+      "progress_indication": "Show progress during potentially long AI requests",
+      "error_display": "Display meaningful error messages to users"
+    }
+  },
+  "file_formats": {
+    "input": {
+      "content_type": "application/json",
+      "encoding": "UTF-8"
+    },
+    "output": {
+      "content_type": "application/octet-stream",
+      "file_extension": ".pdsprj",
+      "format": "ZIP archive containing Proteus project files",
+      "encoding": "binary"
+    }
+  },
+  "limits": {
+    "max_request_size": "16MB",
+    "max_prompt_length": "10000 characters",
+    "supported_file_extensions": [".vhdl", ".v", ".sv"],
+    "max_output_file_size": "100MB"
+  },
+  "deployment": {
+    "development": {
+      "host": "localhost",
+      "port": 5000,
+      "debug": true
+    },
+    "production": {
+      "host": "0.0.0.0",
+      "port": 8080,
+      "debug": false,
+      "workers": 4
+    },
+    "docker": {
+      "image": "hdl-ai-proteus",
+      "ports": ["5000:5000"],
+      "volumes": ["./logs:/app/logs", "./export:/app/export"]
+    }
+  }
+}
